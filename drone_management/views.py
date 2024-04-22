@@ -1,6 +1,10 @@
 from rest_framework import viewsets
 from .models import Drone,Camera,Weapon,AttackDrone,Mission,MissionDrones
 from .serializers import DroneSerializer,CameraSerializer,WeaponSerializer,AttackDroneSerializer,MissionSerializer,MissionDronesSerializer
+from rest_framework.decorators import action
+from rest_framework.response import Response
+from rest_framework import status
+
 # Create your views here.
 #implement the CRUD operations on Drone using the ModelViewSet DRF class
 class DroneViewSet(viewsets.ModelViewSet):
@@ -27,4 +31,17 @@ class MissionViewSet(viewsets.ModelViewSet):
 class MissionDronesViewSet(viewsets.ModelViewSet):
     queryset=MissionDrones.objects.all()
     serializer_class=MissionDronesSerializer
+    #get the missions of a given drone
+    @action(methods=['GET'],detail=True)
+    def get_drone_missions(self,request,id=None):
+        if request.method!='GET':
+            return Response({'message':'This endpoint only supports GET requests','status':status.HTTP_405_METHOD_NOT_ALLOWED})
+        d1=Drone.objects.get(pk=id)
+        if d1 is None:
+            return Response({'message':'Drone not found','status':status.HTTP_404_NOT_FOUND})
+        missions=MissionDrones.objects.filter(drone=d1)
+        missions_serialized=MissionSerializer(missions,many=True)
+        return Response(missions_serialized.data)
+        
+        
 
