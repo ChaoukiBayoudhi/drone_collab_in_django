@@ -36,12 +36,15 @@ class MissionDronesViewSet(viewsets.ModelViewSet):
     def get_drone_missions(self,request,id=None):
         if request.method!='GET':
             return Response({'message':'This endpoint only supports GET requests','status':status.HTTP_405_METHOD_NOT_ALLOWED})
-        d1=Drone.objects.get(pk=id)
-        if d1 is None:
+        try:
+            drone=Drone.objects.get(pk=id)
+        except Drone.DoesNotExist:
             return Response({'message':'Drone not found','status':status.HTTP_404_NOT_FOUND})
-        missions=MissionDrones.objects.filter(drone=d1)
+        missions=Mission.objects.filter(drones=drone)
         missions_serialized=MissionSerializer(missions,many=True)
         return Response(missions_serialized.data)
+    
+   # def 
         
         
 

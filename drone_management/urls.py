@@ -9,5 +9,6 @@ router.register('attack-drones',AttackDroneViewSet)
 router.register('missions',MissionViewSet)
 router.register('mission-drones',MissionDronesViewSet)
 urlpatterns=[
-    path('',include(router.urls))
+    path('',include(router.urls)),
+    path('drone-missions/<int:id>',MissionDronesViewSet.as_view({'get':'get_drone_missions'}))
 ]
